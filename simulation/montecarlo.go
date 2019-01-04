@@ -18,7 +18,7 @@ func New(inputFile string, future int) (Simulation, error) {
 }
 
 func NewWithData(inputData []float64, future int, simulations int) Simulation {
-	return Simulation{inputData: &inputData, future: future, simulations: simulations}
+	return Simulation{InputData: &inputData, Future: future, Simulations: simulations}
 }
 
 func readDataFile(fileName string) ([]float64, error) {
@@ -50,30 +50,40 @@ func readDataFile(fileName string) ([]float64, error) {
 
 // Simulation represents a MonteCarlo simulation
 type Simulation struct {
-	inputData   *[]float64
-	future      int
-	simulations int
+	InputData   *[]float64
+	Future      int
+	Simulations int
+	Data        []SimulationData
+	Forecasts   []Forecast // One forecast per percentil. If decided increments in 10%, there will be one forecast per each 10%. Each forecast will have a dataset per each future time
 }
 
 type SimulationData struct {
-	future []float64
+	Future    []float64
+	SumFuture []float64
 }
 
-func (s *Simulation) Run() []SimulationData {
-	data := []SimulationData{}
-	for i := 0; i < s.simulations; i++ {
+type Forecast struct {
+	Percentil float64
+	Forecast  []float64
+}
 
-		data = append(data, s.singleMonteCarlo())
+func (s *Simulation) generateData() {
+	s.Data = []SimulationData{}
+	for i := 0; i < s.Simulations; i++ {
+		s.Data = append(s.Data, s.singleMonteCarlo())
 	}
-	return data
+}
+
+func (s *Simulation) Run() {
+	s.generateData()
 }
 
 func (s *Simulation) singleMonteCarlo() SimulationData {
 	data := SimulationData{}
-	totalInput := len(*s.inputData)
-	for i := 0; i < s.future; i++ {
+	totalInput := len(*s.InputData)
+	for i := 0; i < s.Future; i++ {
 		item := rand.Intn(totalInput)
-		data.future = append(data.future, (*s.inputData)[item])
+		data.Future = append(data.Future, (*s.InputData)[item])
 	}
 	return data
 }
