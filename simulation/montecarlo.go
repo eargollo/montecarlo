@@ -15,11 +15,11 @@ func New(inputFile string, future int) (Simulation, error) {
 	if err != nil {
 		return Simulation{}, err
 	}
-	return NewWithData(inputData, future, 1000000), err
+	return NewWithData(inputData, future, 1000000, 20), err
 }
 
-func NewWithData(inputData []float64, future int, simulations int) Simulation {
-	return Simulation{InputData: &inputData, Future: future, Simulations: simulations}
+func NewWithData(inputData []float64, future int, simulations int, forecastPoints int) Simulation {
+	return Simulation{InputData: &inputData, Future: future, Simulations: simulations, ForecastPoints: forecastPoints}
 }
 
 func readDataFile(fileName string) ([]float64, error) {
@@ -123,4 +123,20 @@ func (s *Simulation) singleMonteCarlo() SimulationData {
 		data.Future = append(data.Future, (*s.InputData)[item])
 	}
 	return data
+}
+
+func (s *Simulation) ForecastStdout() {
+	fmt.Printf("Future points\t%v\tSimulations\t%v\n", s.Future, s.Simulations)
+	fmt.Printf("Confidence %%")
+	for i := 0; i < s.Future; i++ {
+		fmt.Printf("\t%v", i)
+	}
+	fmt.Printf("\n")
+	for i := 0; i < s.ForecastPoints; i++ {
+		fmt.Printf("%v%%", s.Forecasts[i].Percentil)
+		for j := 0; j < s.Future; j++ {
+			fmt.Printf("\t%v", s.Forecasts[i].Forecast[j])
+		}
+		fmt.Printf("\n")
+	}
 }

@@ -1,8 +1,7 @@
 package cmd
 
 import (
-	"fmt"
-
+	"github.azc.ext.hp.com/eduardo/montecarlo/simulation"
 	"github.com/spf13/cobra"
 )
 
@@ -20,6 +19,11 @@ var estimateCmd = &cobra.Command{
 	Short: "Simulate future estimation",
 	Long:  `Estimate towards the future based on past data`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("I did run!")
+		sim,err := simulation.New(baseFile, future)
+		if err != nil {
+			panic(err)
+		}
+		sim.Run()
+		sim.ForecastStdout()
 	},
 }
