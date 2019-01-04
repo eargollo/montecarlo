@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"sort"
 	"strconv"
 )
 
@@ -50,11 +51,12 @@ func readDataFile(fileName string) ([]float64, error) {
 
 // Simulation represents a MonteCarlo simulation
 type Simulation struct {
-	InputData   *[]float64
-	Future      int
-	Simulations int
-	Data        []SimulationData
-	Forecasts   []Forecast // One forecast per percentil. If decided increments in 10%, there will be one forecast per each 10%. Each forecast will have a dataset per each future time
+	InputData      *[]float64
+	Future         int
+	Simulations    int
+	ForecastPoints int
+	Data           []SimulationData
+	Forecasts      []Forecast // One forecast per percentil. If decided increments in 10%, there will be one forecast per each 10%. Each forecast will have a dataset per each future time
 }
 
 type SimulationData struct {
@@ -74,8 +76,43 @@ func (s *Simulation) generateData() {
 	}
 }
 
+func (s *Simulation) aggregateFutureData() {
+	for i, item := range s.Data {
+		s.Data[i].SumFuture = []float64{}
+		sum := 0.0
+		for _, fut := range item.Future {
+			sum += fut
+			s.Data[i].SumFuture = append(s.Data[i].SumFuture, sum)
+		}
+	}
+}
+
+func (s *Simulation) calculateForecasts() {
+	s.Forecasts = []Forecast{}
+	var step float64
+	step = 100.0 / (float64(s.ForecastPoints) - 1)
+	for i := 0; i < s.ForecastPoints; i++ {
+		f := Forecast{Percentil: 100.0 - (float64(i) * step)}
+		// Calculate the element in a sorted array that would represent the minimum on the percentil
+		point := int((100 - f.Percentil) * float64(s.Simulations-1) / 100)
+		for j := 0; j < s.Future; j++ {
+			// Sort the array and get the element
+			data := s.Data
+			sort.Slice(data, func(t, r int) bool { return data[t].SumFuture[j] < data[r].SumFuture[j] })
+			f.Forecast = append(f.Forecast, s.Data[point].SumFuture[j])
+		}
+		s.Forecasts = append(s.Forecasts, f)
+	}
+}
+
+func (s *Simulation) analyze() {
+	s.aggregateFutureData()
+	s.calculateForecasts()
+}
+
 func (s *Simulation) Run() {
 	s.generateData()
+	s.analyze()
 }
 
 func (s *Simulation) singleMonteCarlo() SimulationData {
