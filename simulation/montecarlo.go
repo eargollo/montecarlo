@@ -3,6 +3,7 @@ package simulation
 import (
 	"encoding/csv"
 	"fmt"
+	"math/rand"
 	"os"
 	"strconv"
 )
@@ -13,11 +14,11 @@ func New(inputFile string, future int) (Simulation, error) {
 	if err != nil {
 		return Simulation{}, err
 	}
-	return NewWithData(inputData, future), err
+	return NewWithData(inputData, future, 1000000), err
 }
 
-func NewWithData(inputData []float64, future int) Simulation {
-	return Simulation{inputData: &inputData, future: future}
+func NewWithData(inputData []float64, future int, simulations int) Simulation {
+	return Simulation{inputData: &inputData, future: future, simulations: simulations}
 }
 
 func readDataFile(fileName string) ([]float64, error) {
@@ -52,4 +53,27 @@ type Simulation struct {
 	inputData   *[]float64
 	future      int
 	simulations int
+}
+
+type SimulationData struct {
+	future []float64
+}
+
+func (s *Simulation) Run() []SimulationData {
+	data := []SimulationData{}
+	for i := 0; i < s.simulations; i++ {
+
+		data = append(data, s.singleMonteCarlo())
+	}
+	return data
+}
+
+func (s *Simulation) singleMonteCarlo() SimulationData {
+	data := SimulationData{}
+	totalInput := len(*s.inputData)
+	for i := 0; i < s.future; i++ {
+		item := rand.Intn(totalInput)
+		data.future = append(data.future, (*s.inputData)[item])
+	}
+	return data
 }
