@@ -15,7 +15,7 @@ func New(inputFile string, future int) (Simulation, error) {
 	if err != nil {
 		return Simulation{}, err
 	}
-	return NewWithData(inputData, future, 1000000, 20), err
+	return NewWithData(inputData, future, 1000000, 21), err
 }
 
 func NewWithData(inputData []float64, future int, simulations int, forecastPoints int) Simulation {
@@ -70,6 +70,7 @@ type Forecast struct {
 }
 
 func (s *Simulation) generateData() {
+	fmt.Println("Generating randomized data...")
 	s.Data = []SimulationData{}
 	for i := 0; i < s.Simulations; i++ {
 		s.Data = append(s.Data, s.singleMonteCarlo())
@@ -77,6 +78,7 @@ func (s *Simulation) generateData() {
 }
 
 func (s *Simulation) aggregateFutureData() {
+	fmt.Println("Aggregating future data...")
 	for i, item := range s.Data {
 		s.Data[i].SumFuture = []float64{}
 		sum := 0.0
@@ -88,21 +90,33 @@ func (s *Simulation) aggregateFutureData() {
 }
 
 func (s *Simulation) calculateForecasts() {
+	fmt.Println("Calculating forecasts...")
 	s.Forecasts = []Forecast{}
 	var step float64
 	step = 100.0 / (float64(s.ForecastPoints) - 1)
+	var points []int
+
 	for i := 0; i < s.ForecastPoints; i++ {
-		f := Forecast{Percentil: 100.0 - (float64(i) * step)}
 		// Calculate the element in a sorted array that would represent the minimum on the percentil
-		point := int((100 - f.Percentil) * float64(s.Simulations-1) / 100)
-		for j := 0; j < s.Future; j++ {
-			// Sort the array and get the element
-			data := s.Data
-			sort.Slice(data, func(t, r int) bool { return data[t].SumFuture[j] < data[r].SumFuture[j] })
-			f.Forecast = append(f.Forecast, s.Data[point].SumFuture[j])
-		}
+		point := int(float64(i) * step * float64(s.Simulations-1) / 100)
+		points = append(points, point)
+		// Initialize the forecast for this percentil
+		f := Forecast{Percentil: 100.0 - (float64(i) * step)}
 		s.Forecasts = append(s.Forecasts, f)
 	}
+
+	// Now calculate
+	data := s.Data
+	fmt.Print("   ")
+	for j := 0; j < s.Future; j++ {
+		fmt.Printf(" %v...", j)
+		// Sort the array and get the points in it
+		sort.Slice(data, func(t, r int) bool { return data[t].SumFuture[j] < data[r].SumFuture[j] })
+		for i, point := range points {
+			s.Forecasts[i].Forecast = append(s.Forecasts[i].Forecast, data[point].SumFuture[j])
+		}
+	}
+	fmt.Println("Done.")
 }
 
 func (s *Simulation) analyze() {
@@ -126,10 +140,10 @@ func (s *Simulation) singleMonteCarlo() SimulationData {
 }
 
 func (s *Simulation) ForecastStdout() {
-	fmt.Printf("Future points\t%v\tSimulations\t%v\n", s.Future, s.Simulations)
-	fmt.Printf("Confidence %%")
+	fmt.Printf("FuturePoints\t%v\tSimulations\t%v\n", s.Future, s.Simulations)
+	fmt.Printf("Confidence%%")
 	for i := 0; i < s.Future; i++ {
-		fmt.Printf("\t%v", i)
+		fmt.Printf("\t%v", i+1)
 	}
 	fmt.Printf("\n")
 	for i := 0; i < s.ForecastPoints; i++ {
