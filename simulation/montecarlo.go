@@ -10,15 +10,17 @@ import (
 )
 
 // New initializes a simulation object
-func New(inputFile string, future int) (Simulation, error) {
+func New(inputFile string, future int, simulations int, increment float64) (Simulation, error) {
 	inputData, err := readDataFile(inputFile)
 	if err != nil {
 		return Simulation{}, err
 	}
-	return NewWithData(inputData, future, 1000000, 21), err
+	return NewWithData(inputData, future, simulations, increment), err
 }
 
-func NewWithData(inputData []float64, future int, simulations int, forecastPoints int) Simulation {
+// NewWithData initializes a simulation object with all its details
+func NewWithData(inputData []float64, future int, simulations int, increment float64) Simulation {
+	forecastPoints := int(100/increment) + 1
 	return Simulation{InputData: &inputData, Future: future, Simulations: simulations, ForecastPoints: forecastPoints}
 }
 

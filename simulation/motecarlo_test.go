@@ -18,7 +18,7 @@ func TestReadFile(t *testing.T) {
 }
 
 func TestRunWithSingleData(t *testing.T) {
-	sim := NewWithData([]float64{10}, 12, 100, 21)
+	sim := NewWithData([]float64{10}, 12, 100, 5)
 	sim.Run()
 	res := sim.Data
 	if len(res) != 100 {
@@ -39,7 +39,7 @@ func TestRunWithSingleData(t *testing.T) {
 }
 
 func TestDistribution(t *testing.T) {
-	sim := NewWithData([]float64{0, 1}, 1, 1000000, 21)
+	sim := NewWithData([]float64{0, 1}, 1, 1000000, 5)
 	sim.Run()
 	res := sim.Data
 	distribution := []int{0, 0}
