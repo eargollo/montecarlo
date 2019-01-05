@@ -128,6 +128,7 @@ func (s *Simulation) analyze() {
 	s.calculateForecasts()
 }
 
+// Run executes the full simulation
 func (s *Simulation) Run() {
 	s.generateData()
 	s.analyze()
@@ -146,7 +147,7 @@ func (s *Simulation) singleMonteCarlo() Data {
 // ForecastStdout prints out a report on the standard output (it is a tab separated report)
 func (s *Simulation) ForecastStdout() {
 	fmt.Printf("FuturePoints\t%v\tSimulations\t%v\n", s.Future, s.Simulations)
-	fmt.Printf("Confidence%%")
+	fmt.Printf("Conf%%")
 	for i := 0; i < s.Future; i++ {
 		fmt.Printf("\t%v", i+1)
 	}
