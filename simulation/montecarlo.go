@@ -57,15 +57,17 @@ type Simulation struct {
 	Future         int
 	Simulations    int
 	ForecastPoints int
-	Data           []SimulationData
+	Data           []Data
 	Forecasts      []Forecast // One forecast per percentil. If decided increments in 10%, there will be one forecast per each 10%. Each forecast will have a dataset per each future time
 }
 
-type SimulationData struct {
+// Data is a single random simultaion datapoint
+type Data struct {
 	Future    []float64
 	SumFuture []float64
 }
 
+// Forecast represents one forecast for all the future points of a percentil
 type Forecast struct {
 	Percentil float64
 	Forecast  []float64
@@ -73,7 +75,7 @@ type Forecast struct {
 
 func (s *Simulation) generateData() {
 	fmt.Println("Generating randomized data...")
-	s.Data = []SimulationData{}
+	s.Data = []Data{}
 	for i := 0; i < s.Simulations; i++ {
 		s.Data = append(s.Data, s.singleMonteCarlo())
 	}
@@ -131,8 +133,8 @@ func (s *Simulation) Run() {
 	s.analyze()
 }
 
-func (s *Simulation) singleMonteCarlo() SimulationData {
-	data := SimulationData{}
+func (s *Simulation) singleMonteCarlo() Data {
+	data := Data{}
 	totalInput := len(*s.InputData)
 	for i := 0; i < s.Future; i++ {
 		item := rand.Intn(totalInput)
@@ -141,6 +143,7 @@ func (s *Simulation) singleMonteCarlo() SimulationData {
 	return data
 }
 
+// ForecastStdout prints out a report on the standard output (it is a tab separated report)
 func (s *Simulation) ForecastStdout() {
 	fmt.Printf("FuturePoints\t%v\tSimulations\t%v\n", s.Future, s.Simulations)
 	fmt.Printf("Confidence%%")
