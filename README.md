@@ -58,10 +58,10 @@ This means there is a 95% chance that the team will complete 103 user stories in
 
 This could be applied to story points or any other metric.
 
-The output is a tab separated values table that can be easily imported in MS Excel. To facilitate that you can redirect the output to a file:
+If you want a file that can be easily imported into MS Excel, you can pass the option --csv and the output to a file:
 
 ```
-$ montecarlo.exe estimate --input ./example.txt --future 12 > restult.txt
+$ montecarlo.exe estimate --input ./example.txt --future 12 --csv > restult.csv
 ```
 
 The tool runs 1 million simulations and predicts for every 5% increment as default. You can also change this value at the command line. To see more options:

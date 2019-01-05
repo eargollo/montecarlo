@@ -145,17 +145,23 @@ func (s *Simulation) singleMonteCarlo() Data {
 }
 
 // ForecastStdout prints out a report on the standard output (it is a tab separated report)
-func (s *Simulation) ForecastStdout() {
-	fmt.Printf("FuturePoints\t%v\tSimulations\t%v\n", s.Future, s.Simulations)
+func (s *Simulation) ForecastStdout(csv bool) {
+	var separator string
+	if csv {
+		separator = ","
+	} else {
+		separator = "\t"
+	}
+	fmt.Printf("FuturePoints%v%v%vSimulations%v%v\n", separator, s.Future, separator, separator, s.Simulations)
 	fmt.Printf("Conf%%")
 	for i := 0; i < s.Future; i++ {
-		fmt.Printf("\t%v", i+1)
+		fmt.Printf("%v%v", separator, i+1)
 	}
 	fmt.Printf("\n")
 	for i := 0; i < s.ForecastPoints; i++ {
 		fmt.Printf("%v%%", s.Forecasts[i].Percentil)
 		for j := 0; j < s.Future; j++ {
-			fmt.Printf("\t%v", s.Forecasts[i].Forecast[j])
+			fmt.Printf("%v%v", separator, s.Forecasts[i].Forecast[j])
 		}
 		fmt.Printf("\n")
 	}
