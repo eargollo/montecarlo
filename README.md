@@ -10,6 +10,7 @@ The reports will be generated at the standard output an it is a TSV list.
 First create a file with historical data, with one data point per line.
 
 For example, let's say a team can execute the following amount of story points per sprint (saved in example.txt):
+
 ```
 15
 8
@@ -23,6 +24,7 @@ For example, let's say a team can execute the following amount of story points p
 We want to estimate the next 12 sprints based on this historical data.
 
 We run the `montecarlo` tool with the data file as argument and the 12 cycles for the future:
+
 ```
 $ montecarlo.exe estimate --input ./example.txt --future 12
 Generating randomized data...
@@ -52,7 +54,7 @@ Conf%   1       2       3       4       5       6       7       8       9       
 10%     20      32      45      57      69      81      93      105     117     129     141     153
 5%      20      35      47      60      73      86      98      111     123     135     147     159
 0%      20      40      60      80      100     120     140     155     172     185     205     225
-...
+```
 
 This means there is a 95% chance that the team will complete 103 user stories in the next 12 sprints. A 100% chance (based in past data) that it will complete at least 69 in the next 12 sprints. Or a 80% confidence the team will complete 55 user stories in the next 6 sprints.
 
@@ -65,6 +67,7 @@ $ montecarlo.exe estimate --input ./example.txt --future 12 --csv > restult.csv
 ```
 
 The tool runs 1 million simulations and predicts for every 5% increment as default. You can also change this value at the command line. To see more options:
+
 ```
 $ montecarlo.exe -h
 MonteCarlo: Given a sequence of measurements, and the amount of future data,
