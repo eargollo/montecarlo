@@ -17,6 +17,11 @@ it applies MonteCarlo to predict future results based on past ones.
 
 // Execute runs the application
 func Execute() {
+	if len(os.Args) == 1 {
+		// No arguments passed, run ui
+		rootCmd.SetArgs([]string{"ui"})
+	}
+
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
