@@ -19,7 +19,9 @@ var uiCmd = &cobra.Command{
 	Long:  `Upens UI interface with default settings for estimation`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("Abacaxi...\n")
-		http.HandleFunc("/", homePage)
+		// http.HandleFunc("/", homePage)
+		fs := http.FileServer(http.Dir("public/"))
+		http.Handle("/static/", http.StripPrefix("/static", fs))
 		http.HandleFunc("/all", returnResults)
 		log.Fatal(http.ListenAndServe(":8081", nil))
 	},
