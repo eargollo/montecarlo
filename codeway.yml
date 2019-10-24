@@ -29,7 +29,7 @@ stages:
   parameters:
     gheUser: $(ghe_user) 
     gheToken: $(ghe_auth_token)
-    versionMajorMinor: 0.1
+    versionMajorMinor: 1.2
     linters: '--enable-all'
     # golangVersion: "1.13.1"
     # release: false
