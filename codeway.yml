@@ -1,0 +1,36 @@
+# HP CodeWay fixed header to load the pipeline templates
+resources:
+  repositories:
+  - repository: templates
+    type: githubenterprise
+    name: codeway/templates
+    endpoint: ghe
+    # ref: refs/heads/some-branch # Set up a different branch for CodeWay templates. WARNING: It may be harmful  to use non-released pipelines.
+
+# Define the triggers for your pipeline (https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema?view=azure-devops&tabs=example#triggers)
+trigger: # Trigger on branches
+- master
+- "*"
+# - release
+# - develop
+
+pr: # Trigger on pull requests towards branches
+- master
+# - develop
+# - release
+
+# Variable groups including configurations and secrets you want to use in this pipeline (Pipeline -> Library in ADO UI) 
+variables:
+- group: Defaults
+
+# HP CodeWay pipeline template to be executed and its parameters
+stages:
+- template: templates/golang-v1.yaml@templates  
+  parameters:
+    gheUser: $(ghe_user) 
+    gheToken: $(ghe_auth_token)
+    versionMajorMinor: 0.1
+    linters: '--enable-all'
+    # golangVersion: "1.13.1"
+    # release: false
+    # releaseBranch: release # Define a specific branch different than master to release. Don't forget to add this branch to the 'trigger:'
