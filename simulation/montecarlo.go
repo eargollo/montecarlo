@@ -15,6 +15,7 @@ func New(inputFile string, future int, simulations int, increment float64) (Simu
 	if err != nil {
 		return Simulation{}, err
 	}
+
 	return NewWithData(inputData, future, simulations, increment), err
 }
 
@@ -48,6 +49,7 @@ func readDataFile(fileName string) ([]float64, error) {
 			fmt.Printf("Data %v is not a float number and will be ignored.", line[0])
 		}
 	}
+
 	return data, nil
 }
 
@@ -75,7 +77,9 @@ type Forecast struct {
 
 func (s *Simulation) generateData() {
 	fmt.Println("Generating randomized data...")
+
 	s.Data = []Data{}
+
 	for i := 0; i < s.Simulations; i++ {
 		s.Data = append(s.Data, s.singleMonteCarlo())
 	}
@@ -83,9 +87,11 @@ func (s *Simulation) generateData() {
 
 func (s *Simulation) aggregateFutureData() {
 	fmt.Println("Aggregating future data...")
+
 	for i, item := range s.Data {
 		s.Data[i].SumFuture = []float64{}
 		sum := 0.0
+
 		for _, fut := range item.Future {
 			sum += fut
 			s.Data[i].SumFuture = append(s.Data[i].SumFuture, sum)
@@ -95,9 +101,11 @@ func (s *Simulation) aggregateFutureData() {
 
 func (s *Simulation) calculateForecasts() {
 	fmt.Println("Calculating forecasts...")
+
 	s.Forecasts = []Forecast{}
-	var step float64
-	step = 100.0 / (float64(s.ForecastPoints) - 1)
+
+	var step float64 = 100.0 / (float64(s.ForecastPoints) - 1)
+
 	var points []int
 
 	for i := 0; i < s.ForecastPoints; i++ {
@@ -111,11 +119,14 @@ func (s *Simulation) calculateForecasts() {
 
 	// Now calculate
 	data := s.Data
+
 	fmt.Print("   ")
+
 	for j := 0; j < s.Future; j++ {
 		fmt.Printf(" %v...", j)
 		// Sort the array and get the points in it
 		sort.Slice(data, func(t, r int) bool { return data[t].SumFuture[j] < data[r].SumFuture[j] })
+
 		for i, point := range points {
 			s.Forecasts[i].Forecast = append(s.Forecasts[i].Forecast, data[point].SumFuture[j])
 		}
@@ -137,10 +148,12 @@ func (s *Simulation) Run() {
 func (s *Simulation) singleMonteCarlo() Data {
 	data := Data{}
 	totalInput := len(*s.InputData)
+
 	for i := 0; i < s.Future; i++ {
 		item := rand.Intn(totalInput)
 		data.Future = append(data.Future, (*s.InputData)[item])
 	}
+
 	return data
 }
 
@@ -152,14 +165,18 @@ func (s *Simulation) ForecastStdout(csv bool) {
 	} else {
 		separator = "\t"
 	}
+
 	fmt.Printf("FuturePoints%v%v%vSimulations%v%v\n", separator, s.Future, separator, separator, s.Simulations)
 	fmt.Printf("Conf%%")
+
 	for i := 0; i < s.Future; i++ {
 		fmt.Printf("%v%v", separator, i+1)
 	}
 	fmt.Printf("\n")
+
 	for i := 0; i < s.ForecastPoints; i++ {
 		fmt.Printf("%v%%", s.Forecasts[i].Percentil)
+
 		for j := 0; j < s.Future; j++ {
 			fmt.Printf("%v%v", separator, s.Forecasts[i].Forecast[j])
 		}
