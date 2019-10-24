@@ -1,5 +1,7 @@
 # MonteCarlo
 
+[![Build Status](https://dev.azure.com/hpcodeway/eduardo/_apis/build/status/eduardo.montecarlo?branchName=master)](https://dev.azure.com/hpcodeway/eduardo/_build/latest?definitionId=13&branchName=master)
+
 This simple tool lets you use MonteCarlo simulation based on a data series to estimate
 values in the future with different precision levels.
 
