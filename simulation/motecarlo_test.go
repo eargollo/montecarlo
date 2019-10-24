@@ -8,6 +8,7 @@ import (
 func TestReadFile(t *testing.T) {
 	expected := []float64{5, 6, 7, 4, 5, 12, 1, 3, 5, 7, 8}
 	data, err := readDataFile("testdata/multidata.csv")
+
 	if err != nil {
 		t.Errorf("Failed reading data: %v", err)
 	}
@@ -21,14 +22,17 @@ func TestRunWithSingleData(t *testing.T) {
 	sim := NewWithData([]float64{10}, 12, 100, 5)
 	sim.Run()
 	res := sim.Data
+
 	if len(res) != 100 {
 		t.Errorf("Simulation did not return the 100 expected results. It returned only %v", len(res))
 	}
+
 	for _, item := range res {
 		if len(item.Future) != 12 {
 			t.Errorf("Simulation item has %v future instead of 12", len(item.Future))
 			return
 		}
+
 		for _, fut := range item.Future {
 			if fut != 10 {
 				t.Errorf("Simulation future item is %v when it should be 10", fut)
@@ -43,14 +47,17 @@ func TestDistribution(t *testing.T) {
 	sim.Run()
 	res := sim.Data
 	distribution := []int{0, 0}
+
 	for _, item := range res {
 		for _, fut := range item.Future {
 			distribution[int(fut)]++
 		}
 	}
+
 	if distribution[0]+distribution[1] != 1000000 {
 		t.Errorf("Distribution does not have 1 million elements. It has %v", distribution[0]+distribution[1])
 	}
+
 	if distribution[0] < 499000 || distribution[0] > 501000 || distribution[1] < 499000 || distribution[1] > 501000 {
 		t.Errorf("Distribution is not balanced %v", distribution)
 	}
@@ -66,11 +73,15 @@ func TestAggregateFutureData(t *testing.T) {
 		},
 	}
 	sim.aggregateFutureData()
+
 	expected := []float64{1, 3, 6, 10, 15, 21, 28, 36, 45, 55}
+
 	if !reflect.DeepEqual(expected, sim.Data[0].SumFuture) {
 		t.Errorf("Arrays are different. Expected %v, got %v", expected, sim.Data[0].SumFuture)
 	}
+
 	expected = []float64{10, 19, 27, 34, 40, 45, 49, 52, 54, 55}
+
 	if !reflect.DeepEqual(expected, sim.Data[1].SumFuture) {
 		t.Errorf("Arrays are different. Expected %v, got %v", expected, sim.Data[1].SumFuture)
 	}
@@ -106,6 +117,7 @@ func TestForecasts(t *testing.T) {
 	}
 	sim.aggregateFutureData()
 	sim.calculateForecasts()
+
 	expected := []Forecast{
 		Forecast{Percentil: 100, Forecast: []float64{1, 11, 18}},
 		Forecast{Percentil: 80, Forecast: []float64{4, 15, 23}},
@@ -114,6 +126,7 @@ func TestForecasts(t *testing.T) {
 		Forecast{Percentil: 20, Forecast: []float64{16, 27, 37}},
 		Forecast{Percentil: 0, Forecast: []float64{20, 31, 47}},
 	}
+
 	if !reflect.DeepEqual(expected, sim.Forecasts) {
 		t.Errorf("Forecasts are different. Expected %v, got %v", expected, sim.Forecasts)
 	}
