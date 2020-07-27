@@ -25,7 +25,7 @@ variables:
 
 # HP CodeWay pipeline template to be executed and its parameters
 stages:
-- template: templates/golang-v1.yaml@templates  
+- template: templates/codeway-golang-v1.yaml@templates  
   parameters:
     gheUser: $(ghe_user) 
     gheToken: $(ghe_auth_token)
