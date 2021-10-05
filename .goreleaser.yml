@@ -27,9 +27,3 @@ changelog:
     exclude:
     - '^docs:'
     - '^test:'
-github_urls:
-  api: https://github.azc.ext.hp.com/api/v3/
-  upload: https://github.azc.ext.hp.com/api/uploads/
-  download: https://github.azc.ext.hp.com/
-  # set to true if you use a self-signed certificate
-  skip_tls_verify: false
