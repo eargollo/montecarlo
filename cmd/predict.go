@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.azc.ext.hp.com/eduardo/montecarlo/simulation"
+	"github.com/eargollo/montecarlo/simulation"
 	"github.com/spf13/cobra"
 )
 

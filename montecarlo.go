@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.azc.ext.hp.com/eduardo/montecarlo/cmd"
+	"github.com/eargollo/montecarlo/cmd"
 )
 
 func main() {
